@@ -7,12 +7,15 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controllers/product");
+const checkAPIKey = require('../middlewares/auth')
 
 //Initialize router object
 const router = express.Router();
 
-router.get("/", getAllProducts);
+//Using a middleware checkAPIKey for /api/products route specifically
+router.get("/", checkAPIKey, getAllProducts);
 router.get("/:productID", getSingleProduct);
+
 router.post("/", createProduct);
 router.put("/:productID", replaceProduct);
 router.patch("/:productID", updateProduct);
