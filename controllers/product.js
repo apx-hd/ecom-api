@@ -1,33 +1,40 @@
-const productData = require("../data/products.json");
+// const productData = require("../data/products.json");
+const ProductModel = require("../models/Product");
 
-const getAllProducts = (req, res) => {
+const getAllProducts = async (req, res) => {
   const { category, minprice } = req.query;
-  //Apply filter here
-  if (category && minprice) {
-    const filteredData = productData.filter((element) => {
-      return element.category === category && element.price >= minprice;
-    });
-    res.json(filteredData);
-  } else if (category) {
-    const filteredData = productData.filter((element) => {
-      return element.category === category;
-    });
-    res.json(filteredData);
-  } else if (minprice) {
-    const filteredData = productData.filter((element) => {
-      return element.price >= minprice;
-    });
-    res.json(filteredData);
-  } else res.json(productData);
+  try {
+    //Apply filter here
+    if (category && minprice) {
+      const filteredData = await ProductModel.find({
+        category,
+        price: minprice,
+      });
+      res.json(filteredData);
+    } else if (category) {
+      const filteredData = await ProductModel.find({ category });
+      res.json(filteredData);
+    } else if (minprice) {
+      const filteredData = await ProductModel.find({ price: minprice });
+      res.json(filteredData);
+    } else {
+      const productData = await ProductModel.find();
+      res.json(productData);
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
-const getSingleProduct = (req, res) => {
-  console.log(req.params);
-  const { productID } = req.params;
-  const product = productData.find(
-    (product) => product.id === Number(productID)
-  );
-  res.json(product ? product : "Index Not Found");
+const getSingleProduct = async (req, res) => {
+  try {
+    const { productID } = req.params;
+    const product = await ProductModel.findById(productID);
+    res.json(product ? product : "Data Not Found");
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
 const createProduct = (req, res) => {
