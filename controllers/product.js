@@ -8,14 +8,14 @@ const getAllProducts = async (req, res) => {
     if (category && minprice) {
       const filteredData = await ProductModel.find({
         category,
-        price: minprice,
+        price: {$gte : minprice},
       });
       res.json(filteredData);
     } else if (category) {
       const filteredData = await ProductModel.find({ category });
       res.json(filteredData);
     } else if (minprice) {
-      const filteredData = await ProductModel.find({ price: minprice });
+      const filteredData = await ProductModel.find({ price: {$gte : minprice} });
       res.json(filteredData);
     } else {
       const productData = await ProductModel.find();
@@ -38,7 +38,7 @@ const getSingleProduct = async (req, res) => {
 };
 
 const createProduct = (req, res) => {
-  res.send("This api will create product in database");
+  
 };
 
 const replaceProduct = (req, res) => {
