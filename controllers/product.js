@@ -2,7 +2,7 @@
 const ProductModel = require("../models/Product");
 
 const getAllProducts = async (req, res) => {
-  const { category, minprice } = req.query;
+  const { category, minprice, page, pageSize } = req.query;
   try {
     //Apply filter here
     if (category && minprice) {
@@ -18,7 +18,7 @@ const getAllProducts = async (req, res) => {
       const filteredData = await ProductModel.find({ price: {$gte : minprice} });
       res.json(filteredData);
     } else {
-      const productData = await ProductModel.find();
+      const productData = await ProductModel.find().limit(pageSize).skip((page - 1) * pageSize);
       res.json(productData);
     }
   } catch (err) {
@@ -37,20 +37,48 @@ const getSingleProduct = async (req, res) => {
   }
 };
 
-const createProduct = (req, res) => {
-  
+const createProduct = async (req, res) => {
+  console.log(req.body)
+  try {
+    const product = await ProductModel.create(req.body)
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
-const replaceProduct = (req, res) => {
-  res.send("This api will replace product in database");
+const replaceProduct = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const product = await ProductModel.findOneAndReplace({_id : productID}, req.body, {new:true})
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
-const updateProduct = (req, res) => {
-  res.send("This api will update product in database");
+const updateProduct = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const product = await ProductModel.findByIdAndUpdate(productID, req.body, {new:true})
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
-const deleteProduct = (req, res) => {
-  res.send("This api will delete product in database");
+const deleteProduct = async (req, res) => {
+  const { productID } = req.params;
+  try {
+    const product = await ProductModel.findByIdAndDelete(productID)
+    res.status(200).json(product);
+  } catch (err) {
+    console.log("Something went wrong");
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
 };
 
 module.exports = {

@@ -18,6 +18,7 @@ connectDatabase();
 app.use(cors())
 app.use(logger)
 app.use(morgan('dev'))
+app.use(express.json())
 
 // Link the routes file
 app.use(homeRouter)

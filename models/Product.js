@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const mongooseSchema = mongoose.Schema({
+const productSchema = mongoose.Schema({
     title: {
         type: String,
-        required: true,
+        required: [true, "Title field is required!"],
         unique: true,
-        minlength: 10,
-        maxlength: 140
+        minlength: [10, "Title should be at least 10 characters long"],
+        maxlength: [140, "Title cannot be more than 140 characters long"]
     },
     price: {
         type: Number,
@@ -28,6 +28,6 @@ const mongooseSchema = mongoose.Schema({
     }
 })
 
-const ProductModel = mongoose.model('Product', mongooseSchema)
+const ProductModel = mongoose.model('Product', productSchema)
 
 module.exports = ProductModel;
