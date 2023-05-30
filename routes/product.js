@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controllers/product");
-const checkAPIKey = require('../middlewares/auth')
+const { checkAPIKey, verifyTokenAdmin } = require('../middlewares/auth')
 
 //Initialize router object
 const router = express.Router();
@@ -16,9 +16,9 @@ const router = express.Router();
 router.get("/", checkAPIKey, getAllProducts);
 router.get("/:productID", getSingleProduct);
 
-router.post("/", createProduct);
-router.put("/:productID", replaceProduct);
-router.patch("/:productID", updateProduct);
-router.delete("/:productID", deleteProduct);
+router.post("/", verifyTokenAdmin, createProduct);
+router.put("/:productID", verifyTokenAdmin, replaceProduct);
+router.patch("/:productID", verifyTokenAdmin, updateProduct);
+router.delete("/:productID", verifyTokenAdmin, deleteProduct);
 
 module.exports = router;
